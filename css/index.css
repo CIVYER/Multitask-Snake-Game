@@ -1,0 +1,26 @@
+html, body{
+    height: 100svh;
+    margin: 0;
+}
+
+body{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: grey;
+    overflow: hidden;
+}
+
+#start_container{
+    border: 1px solid black;
+
+    --size:50%;
+    height: var(--size);
+    width: var(--size);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
