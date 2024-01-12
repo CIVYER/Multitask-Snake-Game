@@ -311,9 +311,6 @@ setInterval(() => {
                     body_container.innerHTML = '';
                     game_start = false
                 }, 250);
-                for (let i = 1; i < food.length; i++) {
-                        body.removeChild(food[i]);
-                }
             }
         }
         if(snake_body.length !=0){
