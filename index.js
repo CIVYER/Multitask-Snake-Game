@@ -166,9 +166,15 @@ function spawn_food(){
         if(!(spawned[i])){
             invincible = true;
             snake_head.classList.add('invincible');
+            for (let i = 0; i < snake_body.length; i++) {
+                snake_body[i].classList.add('invincible');
+            }
             setTimeout(() => {
                 invincible = false;
                 snake_head.classList.remove('invincible');
+                for (let i = 0; i < snake_body.length; i++) {
+                    snake_body[i].classList.remove('invincible');
+                }
             }, 1000);
             var food_multiplier = getRandomInt(5);
             if (food_multiplier > 0) {
