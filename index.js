@@ -136,19 +136,27 @@ function eat_larger_food(i){
         }
     }
 }
-
+var over = [];
 for (let i = 0; i < food.length; i++) {
-    food[i].addEventListener('click',()=>{
-        if(food_size[i]  > 30){
-            food_size[i]-=10;
-            food[i].innerHTML = food_size[i];
-            food[i].style.height = String(food_size[i]) + 'px';
-            food[i].style.width = String(food_size[i]) + 'px';
-            food_top[i] = food[i].getBoundingClientRect().top;
-            food_left[i] = food[i].getBoundingClientRect().left;
-            food_bottom[i] = food[i].getBoundingClientRect().bottom;
-            food_right[i] = food[i].getBoundingClientRect().right;
-        }
+    food[i].addEventListener('mouseover',()=>{
+        over[i] = true;
+        setInterval(() => {
+            if(food_size[i]  > 30 && over[i]){
+                food_size[i]-=10;
+                food[i].innerHTML = food_size[i];
+                food[i].style.height = String(food_size[i]) + 'px';
+                food[i].style.width = String(food_size[i]) + 'px';
+                food_top[i] = food[i].getBoundingClientRect().top;
+                food_left[i] = food[i].getBoundingClientRect().left;
+                food_bottom[i] = food[i].getBoundingClientRect().bottom;
+                food_right[i] = food[i].getBoundingClientRect().right;
+            }
+        }, 1000,1);
+    });
+}
+for (let i = 0; i < food.length; i++) {
+    food[i].addEventListener('mouseout',()=>{
+        over[i] = false;
     });
 }
 
