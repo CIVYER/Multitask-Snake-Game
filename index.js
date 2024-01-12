@@ -137,10 +137,11 @@ function eat_larger_food(i){
     }
 }
 var over = [];
+var hover_timer = [];
 for (let i = 0; i < food.length; i++) {
     food[i].addEventListener('mouseover',()=>{
         over[i] = true;
-        setInterval(() => {
+        hover_timer[i] = setInterval(() => {
             if(food_size[i]  > 30 && over[i]){
                 food_size[i]-=10;
                 food[i].innerHTML = food_size[i];
@@ -151,25 +152,27 @@ for (let i = 0; i < food.length; i++) {
                 food_bottom[i] = food[i].getBoundingClientRect().bottom;
                 food_right[i] = food[i].getBoundingClientRect().right;
             }
-        }, 1000,1);
+        }, 1000);
     });
 }
 for (let i = 0; i < food.length; i++) {
     food[i].addEventListener('mouseout',()=>{
         over[i] = false;
+        clearInterval(hover_timer[i]);
     });
 }
 
-
+var invincible_timer = '';
 function spawn_food(){
     for (let i = 0; i < food.length; i++) {
         if(!(spawned[i])){
             invincible = true;
+            clearInterval(invincible_timer);
             snake_head.classList.add('invincible');
             for (let i = 0; i < snake_body.length; i++) {
                 snake_body[i].classList.add('invincible');
             }
-            setTimeout(() => {
+            invincible_timer = setTimeout(() => {
                 invincible = false;
                 snake_head.classList.remove('invincible');
                 for (let i = 0; i < snake_body.length; i++) {
