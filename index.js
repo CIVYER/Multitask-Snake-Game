@@ -120,7 +120,14 @@ var food_count = 0;
 var invincible = false;
 function eat_larger_food(i){
     if(food_size[i]  > 30 && snake_body.length > 0 && invincible == false){
-        body_container.removeChild(snake_body[snake_body.length-1])
+        body_container.removeChild(snake_body[snake_body.length-1]);
+        body_top.pop();
+        body_left.pop();
+        body_bottom.pop();
+        body_right.pop();
+        curr_body_top.pop();
+        curr_body_left.pop();
+        
         food_size[i]-=10;
         food[i].innerHTML = food_size[i];
         food[i].style.height = String(food_size[i]) + 'px';
@@ -152,7 +159,7 @@ for (let i = 0; i < food.length; i++) {
                 food_bottom[i] = food[i].getBoundingClientRect().bottom;
                 food_right[i] = food[i].getBoundingClientRect().right;
             }
-        }, 1000);
+        }, 500);
     });
 }
 for (let i = 0; i < food.length; i++) {
@@ -166,21 +173,26 @@ var invincible_timer = '';
 function spawn_food(){
     for (let i = 0; i < food.length; i++) {
         if(!(spawned[i])){
-            invincible = true;
-            clearInterval(invincible_timer);
-            snake_head.classList.add('invincible');
-            for (let i = 0; i < snake_body.length; i++) {
-                snake_body[i].classList.add('invincible');
-            }
-            invincible_timer = setTimeout(() => {
-                invincible = false;
-                snake_head.classList.remove('invincible');
+            if(snake_body.length < 12){
+                invincible = true;
+                clearInterval(invincible_timer);
+                snake_head.classList.add('invincible');
                 for (let i = 0; i < snake_body.length; i++) {
-                    snake_body[i].classList.remove('invincible');
+                    snake_body[i].classList.add('invincible');
                 }
-            }, 1000);
+                invincible_timer = setTimeout(() => {
+                    invincible = false;
+                    snake_head.classList.remove('invincible');
+                    for (let i = 0; i < snake_body.length; i++) {
+                        snake_body[i].classList.remove('invincible');
+                    }
+                }, 1000);
+            }
             var food_multiplier = getRandomInt(5);
             if (food_multiplier > 0) {
+                if (i<3) {
+                    food_multiplier = 1;
+                }
                 food_size[i] = 30 * food_multiplier;
                 food[i].style.height = String(food_size[i]) + 'px'; 
                 food[i].style.width = String(food_size[i]) + 'px';
