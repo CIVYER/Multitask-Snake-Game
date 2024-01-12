@@ -1,8 +1,9 @@
 html, body{
     height: 100svh;
+}
+*{
     margin: 0;
 }
-
 body{
     position: relative;
     display: flex;
@@ -14,13 +15,33 @@ body{
 
 #start_container{
     border: 1px solid black;
-
+    
     --size:50%;
     height: var(--size);
     width: var(--size);
-
+    
     display: flex;
-
+    
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+}
+#start_container p{
+    width: 50%;
+    text-align: center;
+}
+
+#lengthcon{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    height: 60px;
+
+    display: flex;
+    flex-direction: row;
+
+    font-size: 30px;
+    align-items: flex-start;
+    margin: 0;
 }

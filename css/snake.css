@@ -42,3 +42,16 @@
 .vis{
     visibility: visible;
 }
+
+@keyframes opa {
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 0.5;
+    }
+}
+
+.invincible{
+    animation: opa .5s infinite;
+}

@@ -10,6 +10,8 @@ const start_btn = document.getElementById('start_btn');
 var body_height = body.getBoundingClientRect().height;
 var body_width = body.getBoundingClientRect().width;
 
+var game_start = false;
+
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -112,26 +114,68 @@ var food_top = [];
 var food_left = [];
 var food_bottom = [];
 var food_right = [];
-var food_size = 30;
+var food_size = [];
+var food_count = 0;
 
-function spawn_food(){
-    for (let i = 0; i < food.length; i++) {
-        if(!(spawned[i])){
-            var top = 0;
-            var left = 0;
-            while(top < 30 || top > body_height - 30){
-                top = getRandomInt(body_height);
-            }
-            while(left < 30 || left > body_width - 30){
-                left = getRandomInt(body_width);
-            }
-            food[i].style.top = top + 'px';
-            food[i].style.left = left + 'px';
+var invincible = false;
+function eat_larger_food(i){
+    if(food_size[i]  > 30 && snake_body.length > 0 && invincible == false){
+        body_container.removeChild(snake_body[snake_body.length-1])
+        food_size[i]-=10;
+        food[i].innerHTML = food_size[i];
+        food[i].style.height = String(food_size[i]) + 'px';
+        food[i].style.width = String(food_size[i]) + 'px';
+        food_top[i] = food[i].getBoundingClientRect().top;
+        food_left[i] = food[i].getBoundingClientRect().left;
+        food_bottom[i] = food[i].getBoundingClientRect().bottom;
+        food_right[i] = food[i].getBoundingClientRect().right;
+    }
+    else{
+        if(invincible == false){
+            game_start = false;
+        }
+    }
+}
+
+for (let i = 0; i < food.length; i++) {
+    food[i].addEventListener('click',()=>{
+        if(food_size[i]  > 30){
+            food_size[i]-=10;
+            food[i].innerHTML = food_size[i];
+            food[i].style.height = String(food_size[i]) + 'px';
+            food[i].style.width = String(food_size[i]) + 'px';
             food_top[i] = food[i].getBoundingClientRect().top;
             food_left[i] = food[i].getBoundingClientRect().left;
             food_bottom[i] = food[i].getBoundingClientRect().bottom;
             food_right[i] = food[i].getBoundingClientRect().right;
-            spawned[i] = true;
+        }
+    });
+}
+
+
+function spawn_food(){
+    for (let i = 0; i < food.length; i++) {
+        if(!(spawned[i])){
+            invincible = true;
+            snake_head.classList.add('invincible');
+            setTimeout(() => {
+                invincible = false;
+                snake_head.classList.remove('invincible');
+            }, 1000);
+            var food_multiplier = getRandomInt(5);
+            if (food_multiplier > 0) {
+                food_size[i] = 30 * food_multiplier;
+                food[i].style.height = String(food_size[i]) + 'px'; 
+                food[i].style.width = String(food_size[i]) + 'px';
+                food[i].innerHTML = String(food_size[i]);
+                food[i].style.top = String(getRandomInt(body_height - food_size[i])) + 'px';
+                food[i].style.left = String(getRandomInt(body_width - food_size[i])) + 'px';
+                food_top[i] = food[i].getBoundingClientRect().top;
+                food_left[i] = food[i].getBoundingClientRect().left;
+                food_bottom[i] = food[i].getBoundingClientRect().bottom;
+                food_right[i] = food[i].getBoundingClientRect().right;
+                spawned[i] = true;
+            }
         }
     }
 }
@@ -144,7 +188,6 @@ function add_body(){
 }
 
 // start game
-var game_start = false;
 start_btn.addEventListener('click', ()=>{
     snake_head.style.top = String(getRandomInt(body_height - 50)) + 'px';
     snake_head.style.left = String(getRandomInt(body_width - 50)) + 'px';
@@ -163,11 +206,22 @@ start_btn.addEventListener('click', ()=>{
     body_right = [];
     curr_body_top = [];
     curr_body_left = [];
+
+    spawned = [];
+    food_top = [];
+    food_left = [];
+    food_bottom = [];
+    food_right = [];
+    food_size = [];
+    food_count = 5;
+
     game_start = true;
 });
 
 // timer
+const lll = document.getElementById('length');
 setInterval(() => {
+    lll.innerHTML = snake_body.length;
     if(game_start){
         for(let i = 0; i < food.length; i++){
             food[i].style.visibility = 'visible';
@@ -243,6 +297,9 @@ setInterval(() => {
                     body_container.innerHTML = '';
                     game_start = false
                 }, 250);
+                for (let i = 1; i < food.length; i++) {
+                        body.removeChild(food[i]);
+                }
             }
         }
         if(snake_body.length !=0){
@@ -270,12 +327,18 @@ setInterval(() => {
             && food_bottom[i] >= curr_head_top
             && food_left[i] <= curr_head_right
             && food_right[i] >= curr_head_left){
-                spawned[i] = false;
-                add_body();
+                if(food_size[i] == 30){
+                    spawned[i] = false;
+                    add_body();
+                }
+                else{
+                    eat_larger_food(i);
+                }
             }
         }
     }
     else{
+        lll.innerHTML = 0;
         for(let i = 0; i < food.length; i++){
             food[i].style.visibility = 'hidden';
             spawned[i] = false;
