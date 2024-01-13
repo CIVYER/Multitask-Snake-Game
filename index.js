@@ -33,9 +33,10 @@ function moveY(object, inc){
 var key_pressed = {'w':false, 's':false, 'a':false, 'd':false}
 
 var manual = false;
+var key_on = false;
 
 body.addEventListener('keydown', (e)=>{
-    if(String(e.key).toLowerCase() == 'w' && key_pressed.s != true){
+    if(String(e.key).toLowerCase() == 'w' && key_pressed.s != true && key_on){
         key_pressed.w = true;
         if(manual == false){
             key_pressed.s = false;
@@ -44,7 +45,7 @@ body.addEventListener('keydown', (e)=>{
         }
         snake_head.style.rotate = '180deg'
     }
-    if(String(e.key).toLowerCase() == 's' && key_pressed.w != true){
+    if(String(e.key).toLowerCase() == 's' && key_pressed.w != true && key_on){
         key_pressed.s = true;
         if(manual == false){
             key_pressed.w = false;
@@ -53,7 +54,7 @@ body.addEventListener('keydown', (e)=>{
         }
         snake_head.style.rotate = '0deg'
     }
-    if(String(e.key).toLowerCase() == 'a' && key_pressed.d != true){
+    if(String(e.key).toLowerCase() == 'a' && key_pressed.d != true && key_on){
         key_pressed.a = true;
         if(manual == false){
             key_pressed.w = false;
@@ -62,7 +63,7 @@ body.addEventListener('keydown', (e)=>{
         }
         snake_head.style.rotate = '90deg'
     }
-    if(String(e.key).toLowerCase() == 'd' && key_pressed.a != true){
+    if(String(e.key).toLowerCase() == 'd' && key_pressed.a != true && key_on){
         key_pressed.d = true;
         if(manual == false){
             key_pressed.w = false;
@@ -118,6 +119,29 @@ var food_size = [];
 var food_count = 0;
 
 var invincible = false;
+var bite_power = 30;
+
+function game_over(){
+    key_on = false;
+    key_pressed.w = false;
+    key_pressed.s = false;
+    key_pressed.a = false;
+    key_pressed.d = false;
+    snake_head.classList.add('invincible');
+    for (let i = 0; i < snake_body.length; i++) {
+        snake_body[i].classList.add('invincible');
+    }
+    body_container.innerHTML = 'GAME OVER';
+    setTimeout(() => {
+        snake_head.classList.remove('invincible');
+        for (let i = 0; i < snake_body.length; i++) {
+            snake_body[i].classList.remove('invincible');
+        }
+        body_container.innerHTML = '';
+        game_start = false
+    }, 1000);
+}
+
 function eat_larger_food(i){
     if(food_size[i]  > 30 && snake_body.length > 0 && invincible == false){
         body_container.removeChild(snake_body[snake_body.length-1]);
@@ -128,7 +152,10 @@ function eat_larger_food(i){
         curr_body_top.pop();
         curr_body_left.pop();
         
-        food_size[i]-=10;
+        food_size[i]-=bite_power;
+        if(food_size[i] < 30){
+            food_size[i] = 30;
+        }
         food[i].innerHTML = food_size[i];
         food[i].style.height = String(food_size[i]) + 'px';
         food[i].style.width = String(food_size[i]) + 'px';
@@ -139,7 +166,7 @@ function eat_larger_food(i){
     }
     else{
         if(invincible == false){
-            game_start = false;
+            game_over();
         }
     }
 }
@@ -158,6 +185,27 @@ for (let i = 0; i < food.length; i++) {
                 food_left[i] = food[i].getBoundingClientRect().left;
                 food_bottom[i] = food[i].getBoundingClientRect().bottom;
                 food_right[i] = food[i].getBoundingClientRect().right;
+            }
+        }, 500);
+    });
+}
+var click_timer = [];
+for (let i = 0; i < food.length; i++) {
+    food[i].addEventListener('click',()=>{
+        clearInterval(click_timer[i]);
+        click_timer[i] = setInterval(() => {
+            if(food_size[i]  > 30){
+                food_size[i]-=10;
+                food[i].innerHTML = food_size[i];
+                food[i].style.height = String(food_size[i]) + 'px';
+                food[i].style.width = String(food_size[i]) + 'px';
+                food_top[i] = food[i].getBoundingClientRect().top;
+                food_left[i] = food[i].getBoundingClientRect().left;
+                food_bottom[i] = food[i].getBoundingClientRect().bottom;
+                food_right[i] = food[i].getBoundingClientRect().right;
+            }
+            if(food_size[i] <= 30){
+                clearInterval(click_timer[i]);
             }
         }, 500);
     });
@@ -242,16 +290,35 @@ start_btn.addEventListener('click', ()=>{
     food_bottom = [];
     food_right = [];
     food_size = [];
-    food_count = 5;
 
+    
+    bite_power = 30;
+    snake_head.style.rotate = '0deg'
+    spawn_food();
+
+    key_on = true;
     game_start = true;
 });
 
 // timer
-const lll = document.getElementById('length');
+const b_length = document.getElementById('length');
+const bite = document.getElementById('bite');
 setInterval(() => {
-    lll.innerHTML = snake_body.length;
+    body_height = body.getBoundingClientRect().height;
+    body_width = body.getBoundingClientRect().width;
     if(game_start){
+        if(snake_body.length == bite_power){
+            body_container.innerHTML = '';
+            bite_power += 1;
+            body_top = [];
+            body_left = [];
+            body_bottom = [];
+            body_right = [];
+            curr_body_top = [];
+            curr_body_left = [];
+        }
+        b_length.innerHTML = snake_body.length;
+        bite.innerHTML = bite_power;
         for(let i = 0; i < food.length; i++){
             food[i].style.visibility = 'visible';
         }
@@ -322,10 +389,7 @@ setInterval(() => {
             && body_bottom[i]-24 >= curr_head_top
             && body_left[i]+24 <= curr_head_right
             && body_right[i]-24 >= curr_head_left){
-                setTimeout(() => {
-                    body_container.innerHTML = '';
-                    game_start = false
-                }, 250);
+                game_over();
             }
         }
         if(snake_body.length !=0){
@@ -353,7 +417,7 @@ setInterval(() => {
             && food_bottom[i] >= curr_head_top
             && food_left[i] <= curr_head_right
             && food_right[i] >= curr_head_left){
-                if(food_size[i] == 30){
+                if(food_size[i] <= bite_power){
                     spawned[i] = false;
                     add_body();
                 }
@@ -364,19 +428,13 @@ setInterval(() => {
         }
     }
     else{
-        lll.innerHTML = 0;
+        b_length.innerHTML = 0;
+        bite.innerHTML = 0;
         for(let i = 0; i < food.length; i++){
             food[i].style.visibility = 'hidden';
-            spawned[i] = false;
         }
         snake_head.style.visibility = 'hidden';
         start_container.style.visibility = 'visible';
-        key_pressed.w = false;
-        key_pressed.s = false;
-        key_pressed.a = false;
-        key_pressed.d = false;
-        snake_head.style.rotate = '0deg'
-        spawn_food();
     }
     
 }, 0);
