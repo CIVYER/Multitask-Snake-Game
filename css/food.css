@@ -15,4 +15,6 @@
 
     color: white;
     cursor: pointer;
+
+    visibility: hidden;
 }

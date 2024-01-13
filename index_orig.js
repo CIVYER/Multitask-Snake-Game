@@ -92,14 +92,21 @@ body.addEventListener('keyup', (e)=>{
 });
 
 // snake position/body
-var head_pos = {'top':snake_head.getBoundingClientRect().top, 'bottom':snake_head.getBoundingClientRect().bottom, 'left':snake_head.getBoundingClientRect().left, 'right':snake_head.getBoundingClientRect().right};
-
-var curr_head_pos = {'top':0, 'bottom':0, 'left':0, 'right':0};
+var head_bottom = snake_head.getBoundingClientRect().bottom;
+var head_right = snake_head.getBoundingClientRect().right;
+var head_top = snake_head.getBoundingClientRect().top;
+var head_left = snake_head.getBoundingClientRect().left;
+var curr_head_top = 0;
+var curr_head_left = 0;
+var curr_head_right = 0;
+var curr_head_bottom = 0;
 
 var body_top = [];
 var body_left = [];
 var body_bottom = [];
 var body_right = [];
+var curr_body_top = [];
+var curr_body_left = [];
 var body_inc = 30;
 
 // food
@@ -115,30 +122,23 @@ var invincible = false;
 var bite_power = 30;
 
 function game_over(){
-    game_start = false
     key_on = false;
     key_pressed.w = false;
     key_pressed.s = false;
     key_pressed.a = false;
     key_pressed.d = false;
-    b_length.innerHTML = 0;
-    bite.innerHTML = 0;
     snake_head.classList.add('invincible');
     for (let i = 0; i < snake_body.length; i++) {
         snake_body[i].classList.add('invincible');
     }
     body_container.innerHTML = 'GAME OVER';
     setTimeout(() => {
-        for(let i = 0; i < food.length; i++){
-            food[i].style.visibility = 'hidden';
-        }
-        snake_head.style.visibility = 'hidden';
-        start_container.style.visibility = 'visible';
         snake_head.classList.remove('invincible');
         for (let i = 0; i < snake_body.length; i++) {
             snake_body[i].classList.remove('invincible');
         }
         body_container.innerHTML = '';
+        game_start = false
     }, 1000);
 }
 
@@ -149,6 +149,8 @@ function eat_larger_food(i){
         body_left.pop();
         body_bottom.pop();
         body_right.pop();
+        curr_body_top.pop();
+        curr_body_left.pop();
         
         food_size[i]-=bite_power;
         if(food_size[i] < 30){
@@ -266,14 +268,21 @@ function add_body(){
 start_btn.addEventListener('click', ()=>{
     snake_head.style.top = String(getRandomInt(body_height - 50)) + 'px';
     snake_head.style.left = String(getRandomInt(body_width - 50)) + 'px';
+    head_bottom = snake_head.getBoundingClientRect().bottom;
+    head_right = snake_head.getBoundingClientRect().right;
+    head_top = snake_head.getBoundingClientRect().top;
+    head_left = snake_head.getBoundingClientRect().left;
+    curr_head_top = 0;
+    curr_head_left = 0;
+    curr_head_right = 0;
+    curr_head_bottom = 0;
     
-    head_pos = {'top':snake_head.getBoundingClientRect().top, 'bottom':snake_head.getBoundingClientRect().bottom, 'left':snake_head.getBoundingClientRect().left, 'right':snake_head.getBoundingClientRect().right};
-    curr_head_pos = {'top':0, 'bottom':0, 'left':0, 'right':0};
-
     body_top = [];
     body_left = [];
     body_bottom = [];
     body_right = [];
+    curr_body_top = [];
+    curr_body_left = [];
 
     spawned = [];
     food_top = [];
@@ -281,6 +290,7 @@ start_btn.addEventListener('click', ()=>{
     food_bottom = [];
     food_right = [];
     food_size = [];
+
     
     bite_power = 30;
     snake_head.style.rotate = '0deg'
@@ -293,22 +303,10 @@ start_btn.addEventListener('click', ()=>{
 // timer
 const b_length = document.getElementById('length');
 const bite = document.getElementById('bite');
-
-function set_body(){
-    head_pos.top = snake_head.getBoundingClientRect().top;
-    head_pos.left = snake_head.getBoundingClientRect().left;
-    for (let i = 0; i < snake_body.length; i++) {
-            body_top[i] = snake_body[i].getBoundingClientRect().top;
-            body_left[i] = snake_body[i].getBoundingClientRect().left;
-            body_right[i] = snake_body[i].getBoundingClientRect().right;
-            body_bottom[i] = snake_body[i].getBoundingClientRect().bottom;
-    }
-}
-
 setInterval(() => {
+    body_height = body.getBoundingClientRect().height;
+    body_width = body.getBoundingClientRect().width;
     if(game_start){
-        body_height = body.getBoundingClientRect().height;
-        body_width = body.getBoundingClientRect().width;
         if(snake_body.length == bite_power){
             body_container.innerHTML = '';
             bite_power += 1;
@@ -316,6 +314,8 @@ setInterval(() => {
             body_left = [];
             body_bottom = [];
             body_right = [];
+            curr_body_top = [];
+            curr_body_left = [];
         }
         b_length.innerHTML = snake_body.length;
         bite.innerHTML = bite_power;
@@ -332,48 +332,62 @@ setInterval(() => {
         for (let i = 0; i < snake_body.length; i++) {
             snake_body[i].style.zIndex = -i;
         }
-        if(key_pressed.w && curr_head_pos.top > 0){
+        if(key_pressed.w && curr_head_top > 0){
             moveY(snake_head,-1);
-            if(head_pos.top == curr_head_pos.top+body_inc){
-                set_body();
+            if(head_top == curr_head_top+body_inc){
+                head_top = snake_head.getBoundingClientRect().top;
+                head_left = snake_head.getBoundingClientRect().left;
+                for (let i = 0; i < snake_body.length; i++) {
+                        body_top[i] = snake_body[i].getBoundingClientRect().top;
+                        body_left[i] = snake_body[i].getBoundingClientRect().left;
+                        body_right[i] = snake_body[i].getBoundingClientRect().right;
+                        body_bottom[i] = snake_body[i].getBoundingClientRect().bottom;
+                }
             }
         }
-        if(key_pressed.s && curr_head_pos.bottom < body_height){
+        if(key_pressed.s && curr_head_bottom < body_height){
             moveY(snake_head,1);
-            if(head_pos.top == curr_head_pos.top-body_inc){
-                set_body();
+            if(head_top == curr_head_top-body_inc){
+                head_top = snake_head.getBoundingClientRect().top;
+                head_left = snake_head.getBoundingClientRect().left;
+                for (let i = 0; i < snake_body.length; i++) {
+                        body_top[i] = snake_body[i].getBoundingClientRect().top;
+                        body_left[i] = snake_body[i].getBoundingClientRect().left;
+                        body_right[i] = snake_body[i].getBoundingClientRect().right;
+                        body_bottom[i] = snake_body[i].getBoundingClientRect().bottom;
+                }
             }
         }
-        if(key_pressed.a && curr_head_pos.left > 0){
+        if(key_pressed.a && curr_head_left > 0){
             moveX(snake_head,-1);
-            if(head_pos.left == curr_head_pos.left+body_inc){
-                set_body();
+            if(head_left == curr_head_left+body_inc){
+                head_left = snake_head.getBoundingClientRect().left;
+                head_top = snake_head.getBoundingClientRect().top;
+                for (let i = 0; i < snake_body.length; i++) {
+                        body_top[i] = snake_body[i].getBoundingClientRect().top;
+                        body_left[i] = snake_body[i].getBoundingClientRect().left;
+                        body_right[i] = snake_body[i].getBoundingClientRect().right;
+                        body_bottom[i] = snake_body[i].getBoundingClientRect().bottom;
+                }
             }
         }
-        if(key_pressed.d && curr_head_pos.right < body_width){
+        if(key_pressed.d && curr_head_right < body_width){
             moveX(snake_head,1);
-            if(head_pos.left == curr_head_pos.left-body_inc){
-                set_body();
+            if(head_left == curr_head_left-body_inc){
+                head_left = snake_head.getBoundingClientRect().left;
+                head_top = snake_head.getBoundingClientRect().top;
+                for (let i = 0; i < snake_body.length; i++) {
+                        body_top[i] = snake_body[i].getBoundingClientRect().top;
+                        body_left[i] = snake_body[i].getBoundingClientRect().left;
+                        body_right[i] = snake_body[i].getBoundingClientRect().right;
+                        body_bottom[i] = snake_body[i].getBoundingClientRect().bottom;
+                }
             }
         }
         
-        curr_head_pos.top = snake_head.getBoundingClientRect().top;
-        curr_head_pos.left = snake_head.getBoundingClientRect().left;
-        curr_head_pos.bottom = snake_head.getBoundingClientRect().bottom;
-        curr_head_pos.right = snake_head.getBoundingClientRect().right;
-
-        for (let i = 2; i < snake_body.length; i++) {
-            if(body_top[i]+24 <= curr_head_pos.bottom
-            && body_bottom[i]-24 >= curr_head_pos.top
-            && body_left[i]+24 <= curr_head_pos.right
-            && body_right[i]-24 >= curr_head_pos.left){
-                game_over();
-            }
-        }
-
         if(snake_body.length !=0){
-            snake_body[0].style.top = String(head_pos.top) + 'px';
-            snake_body[0].style.left = String(head_pos.left) + 'px';
+            snake_body[0].style.top = String(head_top) + 'px';
+            snake_body[0].style.left = String(head_left) + 'px';
             for (let i = 0; i < snake_body.length; i++) {
                 snake_body[i].style.top = String(body_top[i-1]) + 'px';
                 snake_body[i].style.left = String(body_left[i-1]) + 'px';
@@ -382,11 +396,29 @@ setInterval(() => {
             }
         }
     
+        curr_head_top = snake_head.getBoundingClientRect().top;
+        curr_head_left = snake_head.getBoundingClientRect().left;
+        curr_head_bottom = snake_head.getBoundingClientRect().bottom;
+        curr_head_right = snake_head.getBoundingClientRect().right;    
+        for (let i = 0; i < snake_body.length; i++) {
+            curr_body_top[i] = snake_body[i].getBoundingClientRect().top;
+            curr_body_left[i] = snake_body[i].getBoundingClientRect().left;
+        }
+
+        
+        for (let i = 2; i < snake_body.length; i++) {
+            if(body_top[i]+24 <= curr_head_bottom
+            && body_bottom[i]-24 >= curr_head_top
+            && body_left[i]+24 <= curr_head_right
+            && body_right[i]-24 >= curr_head_left){
+                game_over();
+            }
+        }
         for (let i = 0; i < food.length; i++) {
-            if(food_top[i] <= curr_head_pos.bottom
-            && food_bottom[i] >= curr_head_pos.top
-            && food_left[i] <= curr_head_pos.right
-            && food_right[i] >= curr_head_pos.left){
+            if(food_top[i] <= curr_head_bottom
+            && food_bottom[i] >= curr_head_top
+            && food_left[i] <= curr_head_right
+            && food_right[i] >= curr_head_left){
                 if(food_size[i] <= bite_power){
                     spawned[i] = false;
                     add_body();
@@ -397,4 +429,14 @@ setInterval(() => {
             }
         }
     }
+    else{
+        b_length.innerHTML = 0;
+        bite.innerHTML = 0;
+        for(let i = 0; i < food.length; i++){
+            food[i].style.visibility = 'hidden';
+        }
+        snake_head.style.visibility = 'hidden';
+        start_container.style.visibility = 'visible';
+    }
+    
 }, 0);
