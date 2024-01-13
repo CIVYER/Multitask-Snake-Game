@@ -18,7 +18,7 @@ function getRandomInt(max) {
 }
 
 // snake movement
-var add_inc = 2;
+var add_inc = 1.5;
 function moveX(object, inc){
     var pos = object.getBoundingClientRect().left;
     inc = add_inc*inc; 
