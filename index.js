@@ -18,7 +18,7 @@ function getRandomInt(max) {
 }
 
 // snake movement
-var add_inc = 2;
+var add_inc = 7.5;
 function moveX(object, inc){
     var pos = object.getBoundingClientRect().left;
     inc = add_inc*inc; 
@@ -287,6 +287,13 @@ start_btn.addEventListener('click', ()=>{
     spawn_food();
 
     key_on = true;
+
+    for(let i = 0; i < food.length; i++){
+        food[i].style.visibility = 'visible';
+    }
+    snake_head.style.visibility = 'visible';
+    start_container.style.visibility = 'hidden';
+
     game_start = true;
 });
 
@@ -305,7 +312,7 @@ function set_body(){
     }
 }
 
-setInterval(() => {
+function game_loop(time){
     if(game_start){
         body_height = body.getBoundingClientRect().height;
         body_width = body.getBoundingClientRect().width;
@@ -319,11 +326,6 @@ setInterval(() => {
         }
         b_length.innerHTML = snake_body.length;
         bite.innerHTML = bite_power;
-        for(let i = 0; i < food.length; i++){
-            food[i].style.visibility = 'visible';
-        }
-        snake_head.style.visibility = 'visible';
-        start_container.style.visibility = 'hidden';
         for (let i = 0; i < food.length; i++) {        
             if(!(spawned[i])){
                 spawn_food();
@@ -397,4 +399,7 @@ setInterval(() => {
             }
         }
     }
-}, 0);
+    window.requestAnimationFrame(game_loop);
+}
+
+window.requestAnimationFrame(game_loop);
