@@ -12,6 +12,10 @@ function no_cheat(){
     const game_over_container = document.getElementById('game_over_container');
     
     const levelUpRemind = document.getElementById('levelUpRemind');
+
+    const score_con = document.getElementById('score');
+    const highScore = document.getElementById('highScore');
+    var score = 0;
     
     var body_height = body.getBoundingClientRect().height;
     var body_width = body.getBoundingClientRect().width;
@@ -127,6 +131,10 @@ function no_cheat(){
     var bite_power = 30;
     
     function game_over(){
+        if(score > localStorage.getItem('highScore')){
+            localStorage.setItem('highScore', String(score).split('.')[0]);
+        }
+        highScore.innerHTML = localStorage.getItem('highScore');
         game_start = false
         key_on = false;
         level_up = false;
@@ -137,6 +145,7 @@ function no_cheat(){
         key_pressed.d = false;
         b_length.innerHTML = 0;
         bite.innerHTML = 0;
+        score = 0;
         levelUpRemind.style.visibility = 'hidden';
         snake_head.classList.add('invincible');
         for (let i = 0; i < snake_body.length; i++) {
@@ -160,6 +169,7 @@ function no_cheat(){
     
     function eat_larger_food(i){
         if(food_size[i]  > 30 && snake_body.length > 0 && invincible == false){
+            add_score();
             body_container.removeChild(snake_body[snake_body.length-1]);
             body_top.pop();
             body_left.pop();
@@ -310,7 +320,7 @@ function no_cheat(){
         }
         snake_head.style.visibility = 'visible';
         start_container.style.visibility = 'hidden';
-    
+        score_con.innerHTML = score;
         game_start = true;
     });
     
@@ -360,6 +370,11 @@ function no_cheat(){
         }
     }
     
+    function add_score(){
+        score += 1 + ((snake_body.length/100) + (bite_power/100));
+        score_con.innerHTML = String(score).split('.')[0];
+    }
+
     function game_loop(time){
         if(game_start){
             body_height = body.getBoundingClientRect().height;
@@ -377,6 +392,10 @@ function no_cheat(){
     
             if(snake_body.length >= bite_power){
                 levelUpRemind.style.visibility = 'visible';
+                b_length.innerHTML = '';
+                bite.innerHTML = '';
+                bite.innerHTML = String(bite_power) + ' = ' + String(bite_power + 1);
+                b_length.innerHTML = String(snake_body.length) + ' = ' + String(snake_body.length - bite_power);
                 space_lock = true;
                 if(level_up == true){
                     bite_power += 1;
@@ -394,10 +413,10 @@ function no_cheat(){
             }
             else{
                 levelUpRemind.style.visibility = 'hidden';
+                b_length.innerHTML = snake_body.length;
+                bite.innerHTML = bite_power;
                 space_lock = false;
             }
-            b_length.innerHTML = snake_body.length;
-            bite.innerHTML = bite_power;
             for (let i = 0; i < food.length; i++) {        
                 if(!(spawned[i])){
                     spawn_food();
@@ -473,12 +492,13 @@ function no_cheat(){
             }
         
             for (let i = 0; i < food.length; i++) {
-                if(food_top[i] <= curr_head_pos.bottom
-                && food_bottom[i] >= curr_head_pos.top
-                && food_left[i] <= curr_head_pos.right
-                && food_right[i] >= curr_head_pos.left){
+                if(food_top[i] <= curr_head_pos.bottom-10
+                && food_bottom[i] >= curr_head_pos.top+10
+                && food_left[i] <= curr_head_pos.right-10
+                && food_right[i] >= curr_head_pos.left+10){
                     if(food_size[i] <= bite_power){
                         spawned[i] = false;
+                        add_score();
                         add_body();
                     }
                     else{
@@ -489,7 +509,12 @@ function no_cheat(){
         }
         window.requestAnimationFrame(game_loop);
     }
-    
+    if(localStorage.getItem('highScore') == null){
+        highScore.innerHTML = 0;
+    }
+    else{
+        highScore.innerHTML = localStorage.getItem('highScore');
+    }
     window.requestAnimationFrame(game_loop);
 }
 no_cheat();

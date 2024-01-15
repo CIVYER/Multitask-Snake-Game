@@ -56,7 +56,7 @@ body{
     background-color: grey;
 
 }
-#length{
+#length, #score{
     margin-right: 1em;
 }
 
@@ -92,4 +92,9 @@ body{
     animation: lvl .5s ease-in-out infinite;
 
     visibility: hidden;
+}
+
+#highScoreCon{
+    display: flex;
+    flex-direction: row;
 }
