@@ -13,8 +13,8 @@ var body_width = body.getBoundingClientRect().width;
 var game_start = false;
 
 
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;;
 }
 
 // snake movement
@@ -234,7 +234,7 @@ function spawn_food(){
                     }
                 }, 1000);
             }
-            var food_multiplier = getRandomInt(5);
+            var food_multiplier = getRandomInt(0,5);
             if (food_multiplier > 0) {
                 if (i<3) {
                     food_multiplier = 1;
@@ -243,8 +243,8 @@ function spawn_food(){
                 food[i].style.height = String(food_size[i]) + 'px'; 
                 food[i].style.width = String(food_size[i]) + 'px';
                 food[i].innerHTML = String(food_size[i]);
-                food[i].style.top = String(getRandomInt(body_height - food_size[i])) + 'px';
-                food[i].style.left = String(getRandomInt(body_width - food_size[i])) + 'px';
+                food[i].style.top = String(getRandomInt(60, body_height - food_size[i])) + 'px';
+                food[i].style.left = String(getRandomInt(60, body_width - food_size[i])) + 'px';
                 food_top[i] = food[i].getBoundingClientRect().top;
                 food_left[i] = food[i].getBoundingClientRect().left;
                 food_bottom[i] = food[i].getBoundingClientRect().bottom;
@@ -264,8 +264,8 @@ function add_body(){
 
 // start game
 start_btn.addEventListener('click', ()=>{
-    snake_head.style.top = String(getRandomInt(body_height - 50)) + 'px';
-    snake_head.style.left = String(getRandomInt(body_width - 50)) + 'px';
+    snake_head.style.top = String(getRandomInt(60, body_height - 50)) + 'px';
+    snake_head.style.left = String(getRandomInt(60, body_width - 50)) + 'px';
     
     head_pos = {'top':snake_head.getBoundingClientRect().top, 'bottom':snake_head.getBoundingClientRect().bottom, 'left':snake_head.getBoundingClientRect().left, 'right':snake_head.getBoundingClientRect().right};
     curr_head_pos = {'top':0, 'bottom':0, 'left':0, 'right':0};
