@@ -301,9 +301,21 @@ start_btn.addEventListener('click', ()=>{
 const b_length = document.getElementById('length');
 const bite = document.getElementById('bite');
 
-function set_body(){
+function set_head_pos(){
     head_pos.top = snake_head.getBoundingClientRect().top;
     head_pos.left = snake_head.getBoundingClientRect().left;
+    head_pos.right = snake_head.getBoundingClientRect().right;
+    head_pos.bottom = snake_head.getBoundingClientRect().bottom;
+}
+function set_curr_head_pos(){
+    curr_head_pos.top = snake_head.getBoundingClientRect().top;
+    curr_head_pos.left = snake_head.getBoundingClientRect().left;
+    curr_head_pos.right = snake_head.getBoundingClientRect().right;
+    curr_head_pos.bottom = snake_head.getBoundingClientRect().bottom;
+}
+
+function set_body(){
+    set_head_pos();
     for (let i = 0; i < snake_body.length; i++) {
             body_top[i] = snake_body[i].getBoundingClientRect().top;
             body_left[i] = snake_body[i].getBoundingClientRect().left;
@@ -312,10 +324,30 @@ function set_body(){
     }
 }
 
+function pos_to_other_side(){
+    if(curr_head_pos.bottom <= 0){
+        snake_head.style.top = String(body_height) + 'px';
+        set_head_pos();
+    }
+    if(curr_head_pos.right <= 0){
+        snake_head.style.left = String(body_width) + 'px';
+        set_head_pos();
+    }
+    if(curr_head_pos.top >= body_height){
+        snake_head.style.top = '-30px';
+        set_head_pos();
+    }
+    if(curr_head_pos.left >= body_width){
+        snake_head.style.left = '-30px';
+        set_head_pos();
+    }
+}
+
 function game_loop(time){
     if(game_start){
         body_height = body.getBoundingClientRect().height;
         body_width = body.getBoundingClientRect().width;
+
         if(snake_body.length == bite_power){
             body_container.innerHTML = '';
             bite_power += 1;
@@ -334,35 +366,36 @@ function game_loop(time){
         for (let i = 0; i < snake_body.length; i++) {
             snake_body[i].style.zIndex = -i;
         }
-        if(key_pressed.w && curr_head_pos.top > 0){
+        if(key_pressed.w){
             moveY(snake_head,-1);
             if(head_pos.top == curr_head_pos.top+body_inc){
                 set_body();
+                pos_to_other_side();
             }
         }
-        if(key_pressed.s && curr_head_pos.bottom < body_height){
+        if(key_pressed.s){
             moveY(snake_head,1);
             if(head_pos.top == curr_head_pos.top-body_inc){
                 set_body();
+                pos_to_other_side();
             }
         }
-        if(key_pressed.a && curr_head_pos.left > 0){
+        if(key_pressed.a){
             moveX(snake_head,-1);
             if(head_pos.left == curr_head_pos.left+body_inc){
                 set_body();
+                pos_to_other_side();
             }
         }
-        if(key_pressed.d && curr_head_pos.right < body_width){
+        if(key_pressed.d){
             moveX(snake_head,1);
             if(head_pos.left == curr_head_pos.left-body_inc){
                 set_body();
+                pos_to_other_side();
             }
         }
         
-        curr_head_pos.top = snake_head.getBoundingClientRect().top;
-        curr_head_pos.left = snake_head.getBoundingClientRect().left;
-        curr_head_pos.bottom = snake_head.getBoundingClientRect().bottom;
-        curr_head_pos.right = snake_head.getBoundingClientRect().right;
+        set_curr_head_pos();
 
         for (let i = 2; i < snake_body.length; i++) {
             if(body_top[i]+24 <= curr_head_pos.bottom
