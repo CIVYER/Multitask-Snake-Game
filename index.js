@@ -378,8 +378,12 @@ function game_loop(time){
             space_lock = true;
             if(level_up == true){
                 bite_power += 1;
-                for (let i = 0; i < bite_power; i++) {
-                    body_container.removeChild(snake_body[snake_body.length - 1]);
+                for (let i = 1; i < bite_power; i++) {
+                    body_container.removeChild(snake_body[snake_body.length-1]);
+                    body_top.pop();
+                    body_left.pop();
+                    body_bottom.pop();
+                    body_right.pop();
                 }
                 level_up = false;
                 space_lock = false;
