@@ -7,6 +7,8 @@ const food = document.getElementsByClassName('food');
 const start_container = document.getElementById('start_container');
 const start_btn = document.getElementById('start_btn');
 
+const game_over_container = document.getElementById('game_over_container');
+
 var body_height = body.getBoundingClientRect().height;
 var body_width = body.getBoundingClientRect().width;
 
@@ -128,8 +130,9 @@ function game_over(){
     for (let i = 0; i < snake_body.length; i++) {
         snake_body[i].classList.add('invincible');
     }
-    body_container.innerHTML = 'GAME OVER';
+    game_over_container.style.visibility = 'visible';
     setTimeout(() => {
+        game_over_container.style.visibility = 'hidden';
         for(let i = 0; i < food.length; i++){
             food[i].style.visibility = 'hidden';
         }
@@ -140,7 +143,7 @@ function game_over(){
             snake_body[i].classList.remove('invincible');
         }
         body_container.innerHTML = '';
-    }, 1000);
+    }, 2000);
 }
 
 function eat_larger_food(i){
