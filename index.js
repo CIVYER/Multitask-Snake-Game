@@ -240,6 +240,7 @@ function spawn_food(){
                     food_multiplier = 1;
                 }
                 food_size[i] = 30 * food_multiplier;
+
                 food[i].style.height = String(food_size[i]) + 'px'; 
                 food[i].style.width = String(food_size[i]) + 'px';
                 food[i].innerHTML = String(food_size[i]);
@@ -325,7 +326,7 @@ function set_body(){
 }
 
 function pos_to_other_side(){
-    if(curr_head_pos.bottom <= 0){
+    if(curr_head_pos.bottom <= 60){
         snake_head.style.top = String(body_height) + 'px';
         set_head_pos();
     }
@@ -334,7 +335,7 @@ function pos_to_other_side(){
         set_head_pos();
     }
     if(curr_head_pos.top >= body_height){
-        snake_head.style.top = '-30px';
+        snake_head.style.top = '30px';
         set_head_pos();
     }
     if(curr_head_pos.left >= body_width){
@@ -347,6 +348,16 @@ function game_loop(time){
     if(game_start){
         body_height = body.getBoundingClientRect().height;
         body_width = body.getBoundingClientRect().width;
+
+        for (let i = 0; i < food.length; i++) {
+            if(food_size[i] <= bite_power){
+                food[i].style.backgroundColor = 'green';
+                food[i].innerHTML = '';
+            }
+            else{
+                food[i].style.backgroundColor = 'brown';
+            }
+        }
 
         if(snake_body.length == bite_power){
             body_container.innerHTML = '';
