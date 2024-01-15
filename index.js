@@ -245,7 +245,7 @@ function no_cheat(){
     function spawn_food(){
         for (let i = 0; i < food.length; i++) {
             if(!(spawned[i])){
-                if(snake_body.length < 12){
+                if(snake_body.length < 10-(bite_power/20)){
                     invincible = true;
                     clearInterval(invincible_timer);
                     snake_head.classList.add('invincible');
