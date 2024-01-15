@@ -234,7 +234,7 @@ function spawn_food(){
                     }
                 }, 1000);
             }
-            var food_multiplier = getRandomInt(0,5);
+            var food_multiplier = getRandomInt(0,8);
             if (food_multiplier > 0) {
                 if (i<3) {
                     food_multiplier = 1;
@@ -412,7 +412,8 @@ function game_loop(time){
             if(body_top[i]+24 <= curr_head_pos.bottom
             && body_bottom[i]-24 >= curr_head_pos.top
             && body_left[i]+24 <= curr_head_pos.right
-            && body_right[i]-24 >= curr_head_pos.left){
+            && body_right[i]-24 >= curr_head_pos.left
+            && invincible == false){
                 game_over();
             }
         }
