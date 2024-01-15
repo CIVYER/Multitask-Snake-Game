@@ -74,3 +74,22 @@ body{
     z-index: 1000;
     /* background-color: transparent; */
 }
+
+@keyframes lvl {
+    0%{
+        background-color: black;
+        font-size: 25px;
+    }
+    100%{
+        /* background-color: white; */
+        color: black;
+    }
+}
+
+#levelUpRemind{
+    margin-left: 1em;
+    color: white;
+    animation: lvl .5s ease-in-out infinite;
+
+    visibility: hidden;
+}

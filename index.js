@@ -9,6 +9,8 @@ const start_btn = document.getElementById('start_btn');
 
 const game_over_container = document.getElementById('game_over_container');
 
+const levelUpRemind = document.getElementById('levelUpRemind');
+
 var body_height = body.getBoundingClientRect().height;
 var body_width = body.getBoundingClientRect().width;
 
@@ -37,6 +39,8 @@ var key_pressed = {'w':false, 's':false, 'a':false, 'd':false}
 
 var manual = false;
 var key_on = false;
+var level_up = false;
+var space_lock = false;
 
 body.addEventListener('keydown', (e)=>{
     if(String(e.key).toLowerCase() == 'w' && key_pressed.s != true && key_on){
@@ -74,6 +78,9 @@ body.addEventListener('keydown', (e)=>{
             key_pressed.a = false;
         }
         snake_head.style.rotate = '-90deg'
+    }
+    if(e.keyCode == 32 && space_lock == true){
+        level_up = true;
     }
 });
 body.addEventListener('keyup', (e)=>{
@@ -120,12 +127,15 @@ var bite_power = 30;
 function game_over(){
     game_start = false
     key_on = false;
+    level_up = false;
+    space_lock = false;
     key_pressed.w = false;
     key_pressed.s = false;
     key_pressed.a = false;
     key_pressed.d = false;
     b_length.innerHTML = 0;
     bite.innerHTML = 0;
+    levelUpRemind.style.visibility = 'hidden';
     snake_head.classList.add('invincible');
     for (let i = 0; i < snake_body.length; i++) {
         snake_body[i].classList.add('invincible');
@@ -363,13 +373,22 @@ function game_loop(time){
             }
         }
 
-        if(snake_body.length == bite_power){
-            body_container.innerHTML = '';
-            bite_power += 1;
-            body_top = [];
-            body_left = [];
-            body_bottom = [];
-            body_right = [];
+        if(snake_body.length >= bite_power){
+            levelUpRemind.style.visibility = 'visible';
+            space_lock = true;
+            if(level_up == true){
+                bite_power += 1;
+                for (let i = 0; i < bite_power; i++) {
+                    body_container.removeChild(snake_body[snake_body.length - 1]);
+                }
+                level_up = false;
+                space_lock = false;
+                levelUpRemind.style.visibility = 'hidden';
+            }
+        }
+        else{
+            levelUpRemind.style.visibility = 'hidden';
+            space_lock = false;
         }
         b_length.innerHTML = snake_body.length;
         bite.innerHTML = bite_power;
