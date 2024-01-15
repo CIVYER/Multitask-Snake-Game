@@ -12,6 +12,7 @@ var body_width = body.getBoundingClientRect().width;
 
 var game_start = false;
 
+var body_size = 15;
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;;
@@ -379,30 +380,46 @@ function game_loop(time){
         }
         if(key_pressed.w){
             moveY(snake_head,-1);
-            if(head_pos.top == curr_head_pos.top+body_inc){
+            if(head_pos.top == curr_head_pos.top+body_size){
                 set_body();
                 pos_to_other_side();
+                if(snake_body.length !=0){
+                    snake_body[0].style.top = String(head_pos.top + body_size) + 'px';
+                    snake_body[0].style.left = String(head_pos.left) + 'px';
+                }
             }
         }
         if(key_pressed.s){
             moveY(snake_head,1);
-            if(head_pos.top == curr_head_pos.top-body_inc){
+            if(head_pos.top == curr_head_pos.top-body_size){
                 set_body();
                 pos_to_other_side();
+                if(snake_body.length !=0){
+                    snake_body[0].style.top = String(head_pos.top - body_size) + 'px';
+                    snake_body[0].style.left = String(head_pos.left) + 'px';
+                }
             }
         }
         if(key_pressed.a){
             moveX(snake_head,-1);
-            if(head_pos.left == curr_head_pos.left+body_inc){
+            if(head_pos.left == curr_head_pos.left+body_size){
                 set_body();
                 pos_to_other_side();
+                if(snake_body.length !=0){
+                    snake_body[0].style.top = String(head_pos.top) + 'px';
+                    snake_body[0].style.left = String(head_pos.left + body_size) + 'px';
+                }
             }
         }
         if(key_pressed.d){
             moveX(snake_head,1);
-            if(head_pos.left == curr_head_pos.left-body_inc){
+            if(head_pos.left == curr_head_pos.left-body_size){
                 set_body();
                 pos_to_other_side();
+                if(snake_body.length !=0){
+                    snake_body[0].style.top = String(head_pos.top) + 'px';
+                    snake_body[0].style.left = String(head_pos.left - body_size) + 'px';
+                }
             }
         }
         
@@ -419,8 +436,6 @@ function game_loop(time){
         }
 
         if(snake_body.length !=0){
-            snake_body[0].style.top = String(head_pos.top) + 'px';
-            snake_body[0].style.left = String(head_pos.left) + 'px';
             for (let i = 0; i < snake_body.length; i++) {
                 snake_body[i].style.top = String(body_top[i-1]) + 'px';
                 snake_body[i].style.left = String(body_left[i-1]) + 'px';
